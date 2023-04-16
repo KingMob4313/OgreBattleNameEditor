@@ -44,6 +44,10 @@ namespace OgreBattleNameEditor
                 string fileName = dialog.FileName;
                 byte[] fileBytes = File.ReadAllBytes(fileName);
 
+                NameProcessor nameProcessor = new NameProcessor();
+                List<NameRecord> nameRecord = nameProcessor.processNameRecords(fileBytes);
+
+
             }
         }
     }

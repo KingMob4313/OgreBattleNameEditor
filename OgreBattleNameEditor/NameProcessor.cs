@@ -9,33 +9,30 @@ namespace OgreBattleNameEditor
     class NameProcessor
     {
         //Will name this smarter later
-        string prefixedHex = "0x00088d3c";
-
-        public List<NameRecord> processByteRecords(byte[] fileBytes)
-        {
-            List<NameRecord> currentNameRecords = new List<NameRecord>();
-
-            int nameCount = 0;
-            nameCount = getRecordCount(fileBytes);
-            return currentNameRecords;
-        }
+        int startByte = Convert.ToInt32("0x00088d3c", 16);
 
         public List<NameRecord> processNameRecords(byte[] fileBytes)
         {
-            int byteStart = ;
-            int recordCount = getRecordCount(fileBytes, byteStart);
+            int recordCount = getRecordCount(fileBytes, startByte);
             List<NameRecord> collectedNameRecords = new List<NameRecord>();
-            int byteLocation = byteStart;
-
+            int currentByteLocation = startByte;
+            
             for (int i = 0; i < recordCount; i++)
             {
+                
+                int currentNameLength = (getNameLength(fileBytes, startByte, fileBytes.Length));
                 NameRecord currentNameRecord = new NameRecord();
-                currentNameRecord.NameByteStart = byteStart;
-                currentNameRecord.NameLength = (readEndByte(fileBytes, byteStart)) - byteStart;
+                currentNameRecord.NameByteStart = currentByteLocation;
+                currentNameRecord.NameLength = currentNameLength;
                 currentNameRecord.NameId = i;
-                currentNameRecord.NameStartInHex = byteStart.ToString("X");
-                currentNameRecord.OldName = getNameFromBytes(fileBytes, byteStart, currentNameRecord.NameLength);
+                currentNameRecord.NameStartInHex = currentByteLocation.ToString("X");
+                currentNameRecord.OldName = getNameFromBytes(fileBytes, currentByteLocation, currentNameRecord.NameLength);
+
+                collectedNameRecords.Add(currentNameRecord);
+                currentByteLocation = currentByteLocation + currentNameLength;
             }
+
+            return collectedNameRecords;
         }
 
         private string getNameFromBytes(byte[] fileBytes, int byteStart, int nameLength)
@@ -55,13 +52,14 @@ namespace OgreBattleNameEditor
         {
             int recordCount = 0;
             int startByte = byteLocationStart;
-            int endByte = 0; 
+            
             bool areRecordsDone = false;
-            while (areRecordsDone)
+            while (!areRecordsDone)
             {
-                endByte = startByte + readEndByte(fileBytes, startByte);
-                startByte = startByte + endByte;
-                areRecordsDone = startByte == endByte;
+                int nameLength = 0;
+                nameLength = getNameLength(fileBytes, startByte, fileBytes.Length);
+                startByte = startByte + nameLength;
+                areRecordsDone = nameLength == 0;
                 if (!areRecordsDone)
                 {
                     recordCount++;
@@ -70,14 +68,17 @@ namespace OgreBattleNameEditor
             return recordCount;
         }
         
-        public int readEndByte(byte[] fileBytes, int intByteStartValue)
+        public int getNameLength(byte[] fileBytes, int intByteStartValue, int veryLastByte)
         {
             int byteLocationCounter = intByteStartValue;
-            while (fileBytes[intByteStartValue] != 0)
+            int counter = 0;
+            while (fileBytes[byteLocationCounter] != 0)
             {
                 byteLocationCounter++;
+                counter++;
             }
-            return (byteLocationCounter - 1);
+            int lastByteLocation = (byteLocationCounter);
+            return (lastByteLocation - intByteStartValue);
         }
 
     }
