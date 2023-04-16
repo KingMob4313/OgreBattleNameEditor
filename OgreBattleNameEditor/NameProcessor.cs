@@ -58,7 +58,7 @@ namespace OgreBattleNameEditor
             {
                 int nameLength = 0;
                 nameLength = getNameLength(fileBytes, startByte, fileBytes.Length);
-                startByte = startByte + nameLength;
+                startByte = startByte + nameLength + 1;
                 areRecordsDone = nameLength == 0;
                 if (!areRecordsDone)
                 {
