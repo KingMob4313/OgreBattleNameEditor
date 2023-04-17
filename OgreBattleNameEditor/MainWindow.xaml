@@ -7,8 +7,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <TextBox HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="647" Margin="10,10,0,0" IsEnabled="False"/>
+        <TextBox x:Name="FileNameTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="647" Margin="10,10,0,0" IsEnabled="False"/>
         <Button Content="Button" HorizontalAlignment="Left" VerticalAlignment="Top" Width="122" Margin="662,11,0,0" Click="Button_Click"/>
+        <DataGrid x:Name="namesGrid" AutoGenerateColumns="True" 
+            SelectionMode="Single" SelectionUnit="FullRow" Margin="15,56,9.6,50"  ItemsSource="{Binding Path=NameRecords, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  CanUserAddRows="False"/>
+
+        <StatusBar HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Width="794" Margin="0,388,-0.4,0"/>
 
     </Grid>
 </Window>

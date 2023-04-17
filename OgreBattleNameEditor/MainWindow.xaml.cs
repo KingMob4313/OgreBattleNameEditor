@@ -22,6 +22,7 @@ namespace OgreBattleNameEditor
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<NameRecord> NameRecords;
         public MainWindow()
         {
             InitializeComponent();
@@ -43,12 +44,11 @@ namespace OgreBattleNameEditor
                 // Open document
                 string fileName = dialog.FileName;
                 byte[] fileBytes = File.ReadAllBytes(fileName);
-
+                FileNameTextBox.Text = fileName;
                 NameProcessor nameProcessor = new NameProcessor();
-                List<NameRecord> nameRecord = nameProcessor.processNameRecords(fileBytes);
-
-
+                NameRecords = nameProcessor.processNameRecords(fileBytes);
             }
+            this.namesGrid.ItemsSource = NameRecords;
         }
     }
 }

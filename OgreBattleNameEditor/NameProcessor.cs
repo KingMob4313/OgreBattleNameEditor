@@ -9,7 +9,8 @@ namespace OgreBattleNameEditor
     class NameProcessor
     {
         //Will name this smarter later
-        int startByte = Convert.ToInt32("0x00088d3c", 16);
+        int startByte = Convert.ToInt32("00088D3C", 16);
+        int endByte = Convert.ToInt32("0008BA30", 16);
 
         public List<NameRecord> processNameRecords(byte[] fileBytes)
         {
@@ -20,7 +21,7 @@ namespace OgreBattleNameEditor
             for (int i = 0; i < recordCount; i++)
             {
                 
-                int currentNameLength = (getNameLength(fileBytes, startByte, fileBytes.Length));
+                int currentNameLength = (getNameLength(fileBytes, currentByteLocation, fileBytes.Length));
                 NameRecord currentNameRecord = new NameRecord();
                 currentNameRecord.NameByteStart = currentByteLocation;
                 currentNameRecord.NameLength = currentNameLength;
@@ -29,7 +30,7 @@ namespace OgreBattleNameEditor
                 currentNameRecord.OldName = getNameFromBytes(fileBytes, currentByteLocation, currentNameRecord.NameLength);
 
                 collectedNameRecords.Add(currentNameRecord);
-                currentByteLocation = currentByteLocation + currentNameLength;
+                currentByteLocation = currentByteLocation + currentNameLength + 1;
             }
 
             return collectedNameRecords;
@@ -47,19 +48,18 @@ namespace OgreBattleNameEditor
             return currentName;
         }
 
-        //Working quickly should be a smarter way that won't involve reading the file multiple times
         public int getRecordCount(byte[] fileBytes, int byteLocationStart)
         {
             int recordCount = 0;
-            int startByte = byteLocationStart;
+            int currentStartByte = byteLocationStart;
             
             bool areRecordsDone = false;
             while (!areRecordsDone)
             {
                 int nameLength = 0;
-                nameLength = getNameLength(fileBytes, startByte, fileBytes.Length);
-                startByte = startByte + nameLength + 1;
-                areRecordsDone = nameLength == 0;
+                nameLength = getNameLength(fileBytes, currentStartByte, fileBytes.Length);
+                currentStartByte = currentStartByte + nameLength + 1;
+                areRecordsDone = currentStartByte >= endByte;
                 if (!areRecordsDone)
                 {
                     recordCount++;
